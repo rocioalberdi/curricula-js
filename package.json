@@ -25,6 +25,7 @@
     "url": "https://github.com/Laboratoria/curricula-js/issues"
   },
   "devDependencies": {
+    "all-contributors-cli": "^5.10.1",
     "chai": "^4.2.0",
     "course-parser": "Laboratoria/course-parser#1.1.1",
     "eslint": "^5.12.0",
@@ -39,9 +40,7 @@
     "mdlint": "Laboratoria/mdlint#v1.0.0",
     "mocha": "^5.2.0",
     "renamer": "^1.1.1",
+    "rubric": "Laboratoria/rubric#v2.0.0",
     "sinon": "^7.2.2"
-  },
-  "dependencies": {
-    "all-contributors-cli": "^5.10.1"
   }
 }

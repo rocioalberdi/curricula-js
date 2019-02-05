@@ -3425,6 +3425,10 @@ rimraf@^2.6.1:
   dependencies:
     glob "^7.0.5"
 
+rubric@Laboratoria/rubric#v2.0.0:
+  version "2.0.0"
+  resolved "git+ssh://git@github.com/Laboratoria/rubric.git#9a7c87f2156b9b3a229d17bf7025d93ea3c7f574"
+
 run-async@^2.2.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/run-async/-/run-async-2.3.0.tgz#0371ab4ae0bdd720d4166d7dfda64ff7a445a6c0"
