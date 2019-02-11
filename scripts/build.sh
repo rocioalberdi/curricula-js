@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-parser='./node_modules/course-parser/curriculum.js'
+parser='./node_modules/course-parser/index.js'
 
 projects=(
   '01-cipher'
