@@ -24,11 +24,12 @@ topics=(
   'javascript'
   'paradigms'
   'react'
-  'redux'
+  # 'redux'
   'scm'
   'shell'
 )
 
+repo=$( node -e "console.log(require('./package.json').repository)" )
 version=$( node -e "console.log(require('./package.json').version)" )
 rubricVersion=$( node -e "console.log(require('rubric').version)" )
 
@@ -37,12 +38,13 @@ buildProjects() {
   echo "Building projects..."
   mkdir -p build/projects
   for project in ${projects[@]}; do
-    ${parser} projects:parse projects/${project} \
+    ${parser} project projects/${project} \
+      --repo ${repo} \
       --version ${version} \
       --rubric ${rubricVersion} \
       --track js \
       --locale es-ES \
-      # > "build/projects/${project}.json"
+      > "build/projects/${project}.json"
   done
 }
 
@@ -51,11 +53,12 @@ buildTopics() {
   echo "Building topics..."
   mkdir -p build/topics
   for topic in ${topics[@]}; do
-    ${parser} topics:parse topics/${topic} \
+    ${parser} topic topics/${topic} \
+      --repo ${repo} \
       --version ${version} \
       --track js \
       --locale es-ES \
-      # > "build/topics/${topic}.json"
+      > "build/topics/${topic}.json"
   done
 }
 
