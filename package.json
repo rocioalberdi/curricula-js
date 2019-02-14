@@ -5,9 +5,9 @@
   "scripts": {
     "mdlint": "mdlint .",
     "eslint": "eslint topics/javascript",
-    "validate": "cd topics && course-parser babel/README.md browser/README.md css/README.md functional/README.md html/README.md javascript/README.md paradigms/README.md react/README.md scm/README.md shell/README.md --track=js --locale=es-ES --validate",
     "pretest": "npm run mdlint && npm run eslint && npm run validate",
     "test": "mocha './topics/!(node_modules)/**/*.spec.js' --verbose",
+    "build": "./scripts/build.sh",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate"
   },
@@ -27,7 +27,7 @@
   "devDependencies": {
     "all-contributors-cli": "^5.10.1",
     "chai": "^4.2.0",
-    "course-parser": "Laboratoria/course-parser#1.1.1",
+    "curriculum-parser": "Laboratoria/curriculum-parser#2.0.0-alpha.1",
     "eslint": "^5.12.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
