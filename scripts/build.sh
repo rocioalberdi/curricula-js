@@ -33,37 +33,77 @@ repo=$( node -e "console.log(require('./package.json').repository)" )
 version=$( node -e "console.log(require('./package.json').version)" )
 rubricVersion=$( node -e "console.log(require('rubric').version)" )
 
+hasFailures=0
+
+if [[ "$1" == "--validate" ]]; then
+  validate=1
+else
+  validate=0
+fi
+
 
 buildProjects() {
   echo "Building projects..."
-  mkdir -p build/projects
   for project in ${projects[@]}; do
+    echo "projects/${project}"
+    if [[ "$validate" == "0" ]]; then
+      dest="build/projects/${project}.json"
+    else
+      dest="/dev/null"
+    fi
     ${parser} project projects/${project} \
       --repo ${repo} \
       --version ${version} \
       --rubric ${rubricVersion} \
       --track js \
       --locale es-ES \
-      > "build/projects/${project}.json"
+      > "${dest}"
+
+    if [[ "$?" != "0" ]]; then
+      hasFailures=1
+      echo "Failed"
+    else
+      echo "OK"
+    fi
   done
 }
 
 
 buildTopics() {
   echo "Building topics..."
-  mkdir -p build/topics
   for topic in ${topics[@]}; do
+    echo "topics/${topic}"
+    if [[ "$validate" == "0" ]]; then
+      dest="build/topics/${topic}.json"
+    else
+      dest="/dev/null"
+    fi
     ${parser} topic topics/${topic} \
       --repo ${repo} \
       --version ${version} \
       --track js \
       --locale es-ES \
-      > "build/topics/${topic}.json"
+      > "${dest}"
+
+    if [[ "$?" != "0" ]]; then
+      hasFailures=1
+      echo "Failed"
+    else
+      echo "OK"
+    fi
   done
 }
 
 
+if [[ "$validate" == "0" ]]; then
+  rm -rf build/*
+  mkdir -p build/projects
+  mkdir -p build/topics
+else
+  echo "Dry run... (validation only)"
+fi
 
-rm -rf build/*
-buildTopics
 buildProjects
+buildTopics
+
+exit "$hasFailures"
