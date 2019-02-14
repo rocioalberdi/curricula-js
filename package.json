@@ -7,6 +7,7 @@
     "eslint": "eslint topics/javascript",
     "pretest": "npm run mdlint && npm run eslint && npm run validate",
     "test": "mocha './topics/!(node_modules)/**/*.spec.js' --verbose",
+    "validate": "./scripts/build.sh --validate",
     "build": "./scripts/build.sh",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate"
