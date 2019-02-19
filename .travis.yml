@@ -2,3 +2,10 @@ language: node_js
 node_js:
   - 8
   - 10
+deploy:
+  provider: script
+  script: ./scripts/deploy.sh
+  skip_cleanup: true
+  on:
+    repo: Laboratoria/curricula-js
+    all_branches: true
