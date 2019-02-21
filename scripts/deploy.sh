@@ -13,24 +13,24 @@ echo "TRAVIS_TAG: ${TRAVIS_TAG}"
 echo ""
 
 
-if [[ "$TRAVIS_BRANCH" == "v2.x" ]]; then
-  apiBaseUrl="https://laboratoria-la-staging.firebaseapp.com"
-elif [[ "$TRAVIS_BRANCH" == "master" ]] && [[ "${TRAVIS_TAG}" == v* ]]; then
-  apiBaseUrl="https://api.laboratoria.la"
-elif [[ ! -z "$LABORATORIA_API_URL" ]]; then
-  apiBaseUrl="$LABORATORIA_API_URL"
-else
-  echo "ignoring branch ${TRAVIS_BRANCH}..."
-  exit 0
-fi
-
-
 email=$LABORATORIA_API_EMAIL
 pass=$LABORATORIA_API_PASS
 
 if [[ -z "$email" ]] || [[ -z "$pass" ]]; then
   echo "Missing API credentials!"
   exit 1;
+fi
+
+
+if [[ "$TRAVIS_BRANCH" == "v2.x" ]]; then
+  apiBaseUrl="https://laboratoria-la-staging.firebaseapp.com"
+elif [[ "${TRAVIS_TAG}" == v* ]]; then
+  apiBaseUrl="https://api.laboratoria.la"
+elif [[ ! -z "$LABORATORIA_API_URL" ]]; then
+  apiBaseUrl="$LABORATORIA_API_URL"
+else
+  echo "ignoring branch ${TRAVIS_BRANCH}..."
+  exit 0
 fi
 
 
