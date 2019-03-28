@@ -8,36 +8,53 @@ echo ""
 echo "Environment:"
 env
 echo ""
+
+
+production="https://api.laboratoria.la"
+staging="https://laboratoria-la-staging.firebaseapp.com"
+version=$( node -e "console.log(require('./package.json').version)" )
+prereleaseType=$( node -e "console.log(('${TRAVIS_TAG}'.split('-')[1] || '').split('.')[0])" )
+email=$LABORATORIA_API_EMAIL
+pass=$LABORATORIA_API_PASS
+apiBaseUrl=""
+
+
 echo "TRAVIS_BRANCH: ${TRAVIS_BRANCH}"
 echo "TRAVIS_TAG: ${TRAVIS_TAG}"
+echo "version: ${version}"
+if [[ ! -z "$prereleaseType" ]]; then
+  echo "prereleaseType: $prereleaseType"
+fi
 echo ""
 
 
-email=$LABORATORIA_API_EMAIL
-pass=$LABORATORIA_API_PASS
-
-if [[ -z "$email" ]] || [[ -z "$pass" ]]; then
-  echo "Missing API credentials!"
+if [[ -z "$version" ]]; then
+  echo "Could not read version from package.json!"
   exit 1;
 fi
 
 
-if [[ "$TRAVIS_BRANCH" == "v2.x" ]]; then
-  apiBaseUrl="https://laboratoria-la-staging.firebaseapp.com"
-elif [[ "${TRAVIS_TAG}" == v* ]]; then
-  apiBaseUrl="https://api.laboratoria.la"
+if [[ "$TRAVIS_TAG" == v* ]]; then
+  echo "Release tag detected!!"
+  if [[ "v$version" != "$TRAVIS_TAG" ]]; then
+    echo "Version in package.json (v${version}) does not match tag (${TRAVIS_TAG})"
+    exit 1
+  fi
+  if [[ "$prereleaseType" == "" ]]; then
+    apiBaseUrl="$production"
+  else
+    apiBaseUrl="$staging"
+  fi
 elif [[ ! -z "$LABORATORIA_API_URL" ]]; then
   apiBaseUrl="$LABORATORIA_API_URL"
 else
-  echo "ignoring branch ${TRAVIS_BRANCH}..."
+  echo "Not a release tag. Ignoring..."
   exit 0
 fi
 
 
-version=$( node -e "console.log(require('./package.json').version)" )
-
-if [[ "$?" != "0" ]] || [[ -z "$version" ]]; then
-  echo "Could not read version from package.json!"
+if [[ -z "$email" ]] || [[ -z "$pass" ]]; then
+  echo "Missing API credentials!"
   exit 1;
 fi
 
@@ -48,7 +65,6 @@ echo ""
 
 # Run build to generate projects and topics JSON files
 yarn build
-
 if [[ "$?" != "0" ]]; then
   echo "Build script failed!"
   exit "$?"
@@ -81,31 +97,55 @@ hasFailures=0
 for file in `ls build/projects`; do
   key=${file:3:-5}
   echo "Publishing project ${key}..."
-  result=$(
+  statusCode=$(
     curl -s \
       -X POST \
       -H 'content-type: application/json' \
       -H "authorization: Bearer ${token}" \
       --data-binary "@build/projects/${file}" \
+      -o /dev/null \
+      -w "%{http_code}" \
       "${apiBaseUrl}/projects"
   )
-
-  statusCode=$( node -e "console.log((${result}).statusCode || 200)" )
 
   if [[ "$?" != "0" ]]; then
     hasFailures=1
     echo "Failed running curl command"
   elif [[ "$statusCode" != "200" ]]; then
     hasFailures=1
-    message=$( node -e "console.log((${result}).message || '')" )
-    echo "Failed (HTTP Status: ${statusCode}): ${message}"
+    echo "Failed (HTTP Status: ${statusCode})"
   else
     echo "OK"
   fi
 done
 
-# Push _courses_ (topics) to firestore (legacy)
 
-# Push topics to API??
+# Push topics to API
+# Push _courses_ (topics) to firestore (legacy)????
+# for file in `ls build/topics`; do
+#   key=${file:0:-5}
+#   echo "Publishing topic ${key}..."
+#   statusCode=$(
+#     curl -s \
+#       -X POST \
+#       -H 'content-type: application/json' \
+#       -H "authorization: Bearer ${token}" \
+#       --data-binary "@build/topics/${file}" \
+#       -o /dev/null \
+#       -w "%{http_code}" \
+#       "${apiBaseUrl}/topics"
+#   )
+#
+#   if [[ "$?" != "0" ]]; then
+#     hasFailures=1
+#     echo "Failed running curl command"
+#   elif [[ "$statusCode" != "200" ]]; then
+#     hasFailures=1
+#     echo "Failed (HTTP Status: ${statusCode})"
+#   else
+#     echo "OK"
+#   fi
+# done
+
 
 exit "$hasFailures"

@@ -104,6 +104,6 @@ else
 fi
 
 buildProjects
-buildTopics
+# buildTopics
 
 exit "$hasFailures"
