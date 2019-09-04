@@ -126,7 +126,7 @@
 
 #### Opciones
 
-1. "Me \"encanta\" JavaScript"
+1. "Me "\encanta\" JavaScript"
 2. "Me \encanta\ JavaScript"
 3. "Me encanta JavaScript"
 4. "Me "encanta" JavaScript"
